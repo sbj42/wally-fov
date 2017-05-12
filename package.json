@@ -1,0 +1,35 @@
+{
+  "name": "wally-fov",
+  "version": "0.1.0",
+  "description": "Field-of-view algorithm with support for walls",
+  "keywords": [
+    "fov",
+    "roguelike"
+  ],
+  "main": "build/index.js",
+  "typings": "build/index.d.ts",
+  "repository": "https://github.com/sbj42/wally-fov.git",
+  "author": "James Clark <jameswclark@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "mocha --reporter min --require ts-node/register test/**/*.ts",
+    "lint": "tslint --project tsconfig.json --type-check src/**/*.ts",
+    "benchmark": "ts-node benchmark/bench-field-of-view.ts",
+    "build": "rimraf bin build && tsc && webpack"
+  },
+  "devDependencies": {
+    "@types/benchmark": "^1.0.30",
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^7.0.14",
+    "@types/seedrandom": "^2.4.27",
+    "benchmark": "^2.1.4",
+    "mocha": "^3.3.0",
+    "rimraf": "^2.6.1",
+    "seedrandom": "^2.4.3",
+    "ts-loader": "^2.0.3",
+    "ts-node": "^3.0.2",
+    "tslint": "^5.1.0",
+    "typescript": "^2.3.2",
+    "webpack": "^2.4.1"
+  }
+}
