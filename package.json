@@ -1,10 +1,11 @@
 {
   "name": "wally-fov",
   "version": "0.1.0",
-  "description": "Field-of-view algorithm with support for walls",
+  "description": "Shadow-casting field-of-view algorithm with support for walls",
   "keywords": [
     "fov",
-    "roguelike"
+    "roguelike",
+    "vision"
   ],
   "main": "build/index.js",
   "typings": "build/index.d.ts",
@@ -15,7 +16,7 @@
     "test": "mocha --reporter min --require ts-node/register test/**/*.ts",
     "lint": "tslint --project tsconfig.json --type-check src/**/*.ts",
     "benchmark": "ts-node benchmark/bench-field-of-view.ts",
-    "build": "rimraf bin build && tsc && webpack"
+    "build": "rimraf bin build && webpack && tsc && rimraf bin/build"
   },
   "devDependencies": {
     "@types/benchmark": "^1.0.30",

@@ -1,6 +1,6 @@
 # WallyFOV
 
-#### Field-of-view algorithm with support for walls
+#### Shadow-casting field-of-view algorithm with support for walls
 
 ## Installation
 
