@@ -2,6 +2,8 @@
 
 #### Shadow-casting field-of-view algorithm with support for walls
 
+[See the demo](https://sbj42.github.io/projects/wally-fov-demo/www/)
+
 ## Installation
 
 ~~~
