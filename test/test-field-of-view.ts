@@ -232,4 +232,106 @@ describe('carto/field-of-view', () => {
         const fov = fovMap.getFieldOfView(1, 1, 1);
         assert.equal(fov.get(2, 2), false);
     });
+    it('gets example 1 right', () => {
+        const fovMap = new FieldOfViewMap(11, 11);
+        fovMap.addBody(3, 3);
+        fovMap.addBody(5, 3);
+        fovMap.addBody(6, 5);
+        fovMap.addBody(3, 6);
+        fovMap.addBody(4, 8);
+        const fov = fovMap.getFieldOfView(5, 5, 5);
+        assert.equal(fov.toString(), `(0,0)/false
+☐☐☑☑☑☐☑☑☑☑☑
+☐☐☑☑☑☐☑☑☑☑☑
+☑☑☐☑☑☐☑☑☑☑☐
+☑☑☑☑☑☑☑☑☑☐☐
+☑☑☑☑☑☑☑☑☐☐☐
+☑☑☑☑☑☑☑☐☐☐☐
+☑☑☑☑☑☑☑☑☐☐☐
+☐☐☑☑☑☑☑☑☑☐☐
+☐☑☑☑☑☑☑☑☑☑☐
+☑☑☑☑☑☑☑☑☑☑☑
+☑☑☑☐☑☑☑☑☑☑☑
+`);
+    });
+    it('gets example 2 right', () => {
+        const fovMap = new FieldOfViewMap(11, 11);
+        fovMap.addBody(4, 3);
+        fovMap.addBody(3, 4);
+        fovMap.addBody(8, 5);
+        fovMap.addBody(7, 6);
+        fovMap.addBody(6, 7);
+        fovMap.addBody(7, 7);
+        const fov = fovMap.getFieldOfView(5, 5, 5);
+        assert.equal(fov.toString(), `(0,0)/false
+☑☑☐☐☑☑☑☑☑☑☑
+☑☑☑☐☑☑☑☑☑☑☑
+☐☑☑☑☑☑☑☑☑☑☑
+☐☐☑☑☑☑☑☑☑☑☑
+☑☑☑☑☑☑☑☑☑☑☑
+☑☑☑☑☑☑☑☑☑☐☐
+☑☑☑☑☑☑☑☑☑☑☑
+☑☑☑☑☑☑☑☑☐☐☐
+☑☑☑☑☑☑☑☐☐☐☐
+☑☑☑☑☑☑☑☐☐☐☐
+☑☑☑☑☑☑☑☐☐☐☐
+`);
+    });
+    it('gets example 3 right', () => {
+        const fovMap = new FieldOfViewMap(11, 11);
+        fovMap.addWall(2, 0, geom.Direction.EAST);
+        fovMap.addWall(2, 1, geom.Direction.EAST);
+        fovMap.addWall(2, 2, geom.Direction.EAST);
+        fovMap.addWall(2, 3, geom.Direction.EAST);
+        fovMap.addWall(5, 1, geom.Direction.SOUTH);
+        fovMap.addWall(6, 3, geom.Direction.NORTH);
+        fovMap.addWall(7, 3, geom.Direction.NORTH);
+        fovMap.addWall(4, 4, geom.Direction.WEST);
+        fovMap.addWall(5, 5, geom.Direction.EAST);
+        fovMap.addWall(3, 6, geom.Direction.NORTH);
+        fovMap.addWall(3, 6, geom.Direction.EAST);
+        fovMap.addWall(4, 8, geom.Direction.WEST);
+        fovMap.addWall(4, 8, geom.Direction.SOUTH);
+        const fov = fovMap.getFieldOfView(5, 5, 5);
+        assert.equal(fov.toString(), `(0,0)/false
+☐☐☐☑☑☐☑☐☐☐☐
+☐☐☐☑☑☐☑☐☐☐☐
+☐☐☐☑☑☑☑☐☐☐☐
+☑☐☐☑☑☑☑☑☐☐☐
+☑☑☑☑☑☑☑☐☐☐☐
+☑☑☑☑☑☑☐☐☐☐☐
+☑☑☑☐☑☑☑☐☐☐☐
+☐☐☐☑☑☑☑☑☐☐☐
+☐☐☑☑☑☑☑☑☑☐☐
+☐☑☑☑☑☑☑☑☑☑☐
+☑☑☑☐☑☑☑☑☑☑☑
+`);
+    });
+    it('gets example 4 right', () => {
+        const fovMap = new FieldOfViewMap(11, 11);
+        fovMap.addWall(2, 2, geom.Direction.EAST);
+        fovMap.addWall(7, 3, geom.Direction.WEST);
+        fovMap.addWall(6, 4, geom.Direction.EAST);
+        fovMap.addWall(6, 6, geom.Direction.EAST);
+        fovMap.addWall(4, 6, geom.Direction.WEST);
+        fovMap.addBody(4, 3);
+        fovMap.addBody(3, 4);
+        fovMap.addBody(6, 3);
+        fovMap.addBody(3, 7);
+        fovMap.addBody(6, 7);
+        const fov = fovMap.getFieldOfView(5, 5, 5);
+        assert.equal(fov.toString(), `(0,0)/false
+☑☐☐☐☑☑☑☐☐☐☐
+☑☑☐☐☑☑☑☐☐☐☐
+☐☑☑☑☑☑☑☐☐☐☐
+☐☐☑☑☑☑☑☐☐☐☑
+☑☑☑☑☑☑☑☑☑☑☑
+☑☑☑☑☑☑☑☑☑☑☑
+☑☑☑☑☑☑☑☑☑☑☑
+☑☐☐☑☑☑☑☑☐☐☑
+☐☐☐☑☑☑☑☑☑☐☐
+☐☐☑☑☑☑☑☐☑☑☐
+☐☐☑☑☑☑☑☐☐☑☑
+`);
+    });
 });

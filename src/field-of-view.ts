@@ -14,7 +14,8 @@ const WEDGE_LOW = 0;
 const WEDGE_HIGH = 1;
 const WEDGE_COUNT = 2;
 
-const EPSILON = 0.00001;
+const BODY_EPSILON = 0.00001;
+const WALL_EPSILON = BODY_EPSILON / 10;
 
 function cutWedge(wedges: number[], wedgeIndex: number, low: number, high: number): number {
     for (; ; ) {
@@ -221,7 +222,7 @@ export class FieldOfViewMap {
                     if (wallX && wallY) {
                         // this tile has both far walls
                         // so we can't see beyond it and the whole range should be cut out of the wedge(s)
-                        wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY - EPSILON, slopeX + EPSILON);
+                        wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY - WALL_EPSILON, slopeX + WALL_EPSILON);
                     } else {
                         const body = (dx !== 0 || dy !== 0) && (this._tileFlags[mapIndex] & TileFlag.BODY) !== 0;
                         if (body) {
@@ -239,18 +240,23 @@ export class FieldOfViewMap {
                             // |   | X | Y |
                             // +---+---+---+
                             if (wallX) {
-                                wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY + EPSILON, slopeX + EPSILON);
+                                wedgeIndex = cutWedge(wedges, wedgeIndex,
+                                    slopeY + BODY_EPSILON, slopeX + WALL_EPSILON);
                             } else if (wallY) {
-                                wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY - EPSILON, slopeX - EPSILON);
+                                wedgeIndex = cutWedge(wedges, wedgeIndex,
+                                    slopeY - WALL_EPSILON, slopeX - BODY_EPSILON);
                             } else {
-                                wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY + EPSILON, slopeX - EPSILON);
+                                wedgeIndex = cutWedge(wedges, wedgeIndex,
+                                    slopeY + BODY_EPSILON, slopeX - BODY_EPSILON);
                             }
                         } else if (wallX) {
                             const slopeFar = slopeY + divYpos;
-                            wedgeIndex = cutWedge(wedges, wedgeIndex, slopeFar - EPSILON, slopeX + EPSILON);
+                            wedgeIndex = cutWedge(wedges, wedgeIndex,
+                                slopeFar - WALL_EPSILON, slopeX + WALL_EPSILON);
                         } else if (wallY) {
                             const slopeFar = slopeY + divYpos;
-                            wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY - EPSILON, slopeFar + EPSILON);
+                            wedgeIndex = cutWedge(wedges, wedgeIndex,
+                                slopeY - WALL_EPSILON, slopeFar + WALL_EPSILON);
                         }
                     }
                 }
