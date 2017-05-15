@@ -260,6 +260,9 @@ describe('carto/field-of-view', () => {
         fovMap.addBody(3, 4);
         fovMap.addBody(8, 5);
         fovMap.addBody(7, 6);
+        fovMap.addBody(2, 7);
+        fovMap.addBody(3, 7);
+        fovMap.addBody(4, 7);
         fovMap.addBody(6, 7);
         fovMap.addBody(7, 7);
         const fov = fovMap.getFieldOfView(5, 5, 5);
@@ -272,9 +275,9 @@ describe('carto/field-of-view', () => {
 ☑☑☑☑☑☑☑☑☑☐☐
 ☑☑☑☑☑☑☑☑☑☑☑
 ☑☑☑☑☑☑☑☑☐☐☐
-☑☑☑☑☑☑☑☐☐☐☐
-☑☑☑☑☑☑☑☐☐☐☐
-☑☑☑☑☑☑☑☐☐☐☐
+☐☐☐☐☑☑☑☐☐☐☐
+☐☐☐☐☑☑☑☐☐☐☐
+☐☐☐☐☑☑☑☐☐☐☐
 `);
     });
     it('gets example 3 right', () => {
