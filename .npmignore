@@ -4,3 +4,8 @@ demo
 .vscode
 yarn.lock
 img
+benchmark
+bin
+test
+tslint.json
+webpack.config.json

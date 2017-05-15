@@ -1,10 +1,11 @@
 {
   "name": "wally-fov",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Shadow-casting field-of-view algorithm with support for walls",
   "keywords": [
     "fov",
     "roguelike",
+    "shadowcasting",
     "vision"
   ],
   "main": "build/index.js",
