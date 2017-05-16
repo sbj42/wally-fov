@@ -2,6 +2,10 @@ import * as geom from './geom';
 
 // tslint:disable:no-bitwise
 
+/**
+ * These flags determine whether a given tile has walls in any of the cardinal
+ * directions, and whether there is a "body" in the tile.
+ */
 enum TileFlag {
     WALL_NORTH = 1 << geom.Direction.NORTH,
     WALL_EAST  = 1 << geom.Direction.EAST,
@@ -10,54 +14,46 @@ enum TileFlag {
     BODY       = 1 << geom.DIRECTIONS.length,
 }
 
+/**
+ * In the shadowcasting algorithm, each shadow is represented by a "wedge",
+ * running from a "low" angle to a "high" angle.  The wedges are all stored in
+ * a simple number array, with two numbers for each wedge.  These constants
+ * (WEDGE_LOW and WEDGE_HIGH) help to identify which number is which.
+ * WEDGE_COUNT is just how many numbers per wedge.
+ */
 const WEDGE_LOW = 0;
 const WEDGE_HIGH = 1;
 const WEDGE_COUNT = 2;
 
+/**
+ * Bodies in this algorithm do not entirely fill their tiles.  This is
+ * implemented by adjusting the angles of the shadows the bodies cast,
+ * making the wedge very slightly narrower.  BODY_EPSILON represents the
+ * amount of reduction on either side of the wedge.
+ */
 const BODY_EPSILON = 0.00001;
+
+/**
+ * Walls do fill the entire tile edge.  With infinite precision, there would be
+ * no need to adjust the shadow cast by a wall.  But we're using floating point
+ * math here, which means imprecision can creep in and cause angles not to line
+ * up properly.  To fix that, we widen the wedges of the shadows cast by walls.
+ * We must make sure not to widen them as much as we narrow the body shadows,
+ * or else they might close the gap we want between a body and a wall.
+ */
 const WALL_EPSILON = BODY_EPSILON / 10;
 
-function cutWedge(wedges: number[], wedgeIndex: number, low: number, high: number): number {
-    for (; ; ) {
-        if (wedgeIndex === wedges.length) {
-            return wedgeIndex;
-        }
-        if (low <= wedges[wedgeIndex + WEDGE_HIGH]) {
-            break;
-        }
-        wedgeIndex += WEDGE_COUNT;
-    }
-    if (low <= wedges[wedgeIndex + WEDGE_LOW]) {
-        if (high >= wedges[wedgeIndex + WEDGE_HIGH]) {
-            // wedge is entirely occluded, remove it
-            wedges.splice(wedgeIndex, WEDGE_COUNT);
-            // now looking at the next wedge (or past the end)
-            return cutWedge(wedges, wedgeIndex, low, high);
-        } else if (high >= wedges[wedgeIndex + WEDGE_LOW]) {
-            // low part of wedge is occluded, trim it
-            wedges[wedgeIndex + WEDGE_LOW] = high;
-            // still looking at the same wedge
-        } else {
-            // this cut doesn't reach the current wedge
-        }
-    } else if (high >= wedges[wedgeIndex + WEDGE_HIGH]) {
-        // high part of wedge is occluded, trim it
-        wedges[wedgeIndex + WEDGE_HIGH] = low;
-        // move on to the next wedge
-        wedgeIndex += WEDGE_COUNT;
-        return cutWedge(wedges, wedgeIndex, low, high);
-    } else {
-        // middle part of wedge is occluded, split it
-        wedges.splice(wedgeIndex, 0, wedges[wedgeIndex + WEDGE_LOW], low);
-        wedgeIndex += WEDGE_COUNT;
-        wedges[wedgeIndex + WEDGE_LOW] = high;
-        // now looking at the second wedge of the split
-    }
-    return wedgeIndex;
-}
-
+/**
+ * We avoid heap allocations during the core part of the algorithm by using this
+ * preallocated offset object.
+ */
 const LOCAL_OFF = new geom.Offset();
 
+/**
+ * The FieldOFViewMap represents the map over which the field of view will be
+ * computed.  It start out empty.  You can add walls and bodies to it, and then
+ * use getFieldOfView() to compute the field of view from a given point.
+ */
 export class FieldOfViewMap {
     private readonly _size = new geom.Size();
     private readonly _tileFlags: number[];
@@ -79,6 +75,10 @@ export class FieldOfViewMap {
 
     // setup and maintenance
 
+    /**
+     * Adds a wall at a particular edge.  This automatically adds the
+     * corresponding wall on the other side.
+     */
     addWall(x: number, y: number, dir: geom.Direction) {
         LOCAL_OFF.set(x, y).addCardinalDirection(dir);
         if (this._size.containsOffset(LOCAL_OFF)) {
@@ -88,6 +88,10 @@ export class FieldOfViewMap {
         }
     }
 
+    /**
+     * Removes a wall at a particular edge.  This automatically removes the
+     * corresponding wall on the other side.
+     */
     removeWall(x: number, y: number, dir: geom.Direction) {
         LOCAL_OFF.set(x, y).addCardinalDirection(dir);
         if (this._size.containsOffset(LOCAL_OFF)) {
@@ -121,6 +125,15 @@ export class FieldOfViewMap {
 
     // execution
 
+    /**
+     * Compute the field of view for a camera at the given tile.
+     * chebyshevRadius is the vision radius.  It uses chebyshev distance
+     * (https://en.wikipedia.org/wiki/Chebyshev_distance), which just means
+     * that the limit of vision in a large empty field will be square.
+     *
+     * This returns a MaskRect, which indicates which tiles are visible.
+     * maskRect.get(x, y) will return true for visible tiles.
+     */
     getFieldOfView(x: number, y: number, chebyshevRadius: number): geom.MaskRect {
         const origin = new geom.Offset(x, y);
         const boundRect = new geom.Rectangle(
@@ -128,7 +141,9 @@ export class FieldOfViewMap {
             chebyshevRadius * 2 + 1, chebyshevRadius * 2 + 1,
         );
         const mask = new geom.MaskRect(boundRect);
+        // the player can always see itself
         mask.set(origin, true);
+        // the field is divided into quadrants
         this._quadrant(mask, origin, chebyshevRadius, -1, -1);
         this._quadrant(mask, origin, chebyshevRadius,  1, -1);
         this._quadrant(mask, origin, chebyshevRadius, -1,  1);
@@ -181,6 +196,18 @@ export class FieldOfViewMap {
                 // |   |   | C |
                 // +---+---Y---F
 
+                // the walls of this tile
+                // these are named as follows:
+                //   wallY is the farthest horizontal wall (slopeY to slopeFar)
+                //   wallX is the farthest vertical wall (slopeFar to slopeX)
+                //
+                // O = origin, C = current
+                // +---+---+---+
+                // | O |   |   |
+                // +---+---+---+
+                // |   |   | C X
+                // +---+---+-Y-+
+
                 // advance the wedge index until this tile is not after the current wedge
                 while (slopeY >= wedges[wedgeIndex + WEDGE_HIGH]) {
                     // X += Y must be written as X = X + Y, in order not to trigger deoptimization due to
@@ -202,18 +229,6 @@ export class FieldOfViewMap {
                 // we can see this tile
                 mask.setAt(maskIndex, true);
 
-                // the walls of this tile
-                // these are named as follows:
-                //   wallY is the farthest horizontal wall (slopeY to slopeFar)
-                //   wallX is the farthest vertical wall (slopeFar to slopeX)
-                //
-                // O = origin, C = current
-                // +---+---+---+
-                // | O |   |   |
-                // +---+---+---+
-                // |   |   | C X
-                // +---+---+-Y-+
-
                 // const/let must be at the top of a block, in order not to trigger deoptimization due to
                 // https://github.com/nodejs/node/issues/9729
                 {
@@ -226,19 +241,6 @@ export class FieldOfViewMap {
                     } else {
                         const body = (dx !== 0 || dy !== 0) && (this._tileFlags[mapIndex] & TileFlag.BODY) !== 0;
                         if (body) {
-                            // there is something in this tile
-                            // so we can't see beyond it and most of the range should be cut out of the wedge(s)
-                            // not the whole range, we leave a smidge on either side, so we can see between
-                            // two somethings in situations like this "corner" case:
-                            //
-                            // O = origin, X = something in the tile, Y = want to see this tile
-                            // +---+---+---+
-                            // | O |   |   |
-                            // +---+---+---+
-                            // |   |   | X |
-                            // +---+---+---+
-                            // |   | X | Y |
-                            // +---+---+---+
                             if (wallX) {
                                 wedgeIndex = cutWedge(wedges, wedgeIndex,
                                     slopeY + BODY_EPSILON, slopeX + WALL_EPSILON);
@@ -263,4 +265,46 @@ export class FieldOfViewMap {
             }
         }
     }
+}
+
+/**
+ * This function cuts a range of angles out of the wedge array.
+ */
+function cutWedge(wedges: number[], wedgeIndex: number, low: number, high: number): number {
+    for (; ; ) {
+        if (wedgeIndex === wedges.length) {
+            return wedgeIndex;
+        }
+        if (low <= wedges[wedgeIndex + WEDGE_HIGH]) {
+            break;
+        }
+        wedgeIndex += WEDGE_COUNT;
+    }
+    if (low <= wedges[wedgeIndex + WEDGE_LOW]) {
+        if (high >= wedges[wedgeIndex + WEDGE_HIGH]) {
+            // wedge is entirely occluded, remove it
+            wedges.splice(wedgeIndex, WEDGE_COUNT);
+            // now looking at the next wedge (or past the end)
+            return cutWedge(wedges, wedgeIndex, low, high);
+        } else if (high >= wedges[wedgeIndex + WEDGE_LOW]) {
+            // low part of wedge is occluded, trim it
+            wedges[wedgeIndex + WEDGE_LOW] = high;
+            // still looking at the same wedge
+        } else {
+            // this cut doesn't reach the current wedge
+        }
+    } else if (high >= wedges[wedgeIndex + WEDGE_HIGH]) {
+        // high part of wedge is occluded, trim it
+        wedges[wedgeIndex + WEDGE_HIGH] = low;
+        // move on to the next wedge
+        wedgeIndex += WEDGE_COUNT;
+        return cutWedge(wedges, wedgeIndex, low, high);
+    } else {
+        // middle part of wedge is occluded, split it
+        wedges.splice(wedgeIndex, 0, wedges[wedgeIndex + WEDGE_LOW], low);
+        wedgeIndex += WEDGE_COUNT;
+        wedges[wedgeIndex + WEDGE_LOW] = high;
+        // now looking at the second wedge of the split
+    }
+    return wedgeIndex;
 }
