@@ -8,4 +8,4 @@ benchmark
 bin
 test
 tslint.json
-webpack.config.json
+webpack.config.js

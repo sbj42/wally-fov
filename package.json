@@ -14,8 +14,8 @@
   "author": "James Clark <jameswclark@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "test": "mocha --reporter min --require ts-node/register test/**/*.ts",
-    "lint": "tslint --project tsconfig.json --type-check src/**/*.ts",
+    "test": "mocha --reporter min --require ts-node/register test/*.ts test/**/*.ts",
+    "lint": "tslint --project tsconfig.json --type-check",
     "benchmark": "ts-node benchmark/bench-field-of-view.ts",
     "build": "rimraf bin build && webpack && webpack -p && tsc && rimraf bin/build"
   },

@@ -14,7 +14,7 @@ npm install wally-fov
 
 Create a map:
 ```js
-const WallyFOV = require('./build');
+const WallyFOV = require('wally-fov');
 
 const width = 5;
 const height = 5;
