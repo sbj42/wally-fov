@@ -2,7 +2,7 @@
 
 #### Shadow-casting field-of-view algorithm with support for walls
 
-[See the demo](https://sbj42.github.io/projects/wally-fov-demo/www/)
+[See the demo](https://sbj42.github.io/projects/wally-fov-demo/www/), and check out the successor to this algorithm: [WarpField](https://github.com/sbj42/warp-field), which supports portals.
 
 ## Installation
 
