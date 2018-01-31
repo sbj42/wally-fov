@@ -158,6 +158,10 @@ export class FieldOfViewMap {
                                          -1), this._size.width) - startX) * xDir;
         const endDY = (Math.min(Math.max(startY + yDir * (chebyshevRadius + 1),
                                          -1), this._size.height) - startY) * yDir;
+        if (endDX < 0 || endDY < 0) {
+            // the origin is outside of the map
+            return;
+        }
         const farYFlag = yDir === 1 ? TileFlag.WALL_SOUTH : TileFlag.WALL_NORTH;
         const farXFlag = xDir === 1 ? TileFlag.WALL_EAST : TileFlag.WALL_WEST;
         const startMapIndex = this._size.index(origin);

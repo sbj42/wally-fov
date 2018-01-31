@@ -337,4 +337,26 @@ describe('carto/field-of-view', () => {
 ☐☐☑☑☑☑☑☐☐☑☑
 `);
     });
+    it('works with offset out of bounds', () => {
+        const fovMap = new FieldOfViewMap(7, 7);
+        const fov = fovMap.getFieldOfView(10, 10, 2);
+        assert.equal(fov.toString(), `(8,8)/false
+☑☑☑☐☐
+☑☑☑☐☐
+☑☑☑☐☐
+☐☐☐☐☐
+☐☐☐☐☐
+`);
+    });
+    it('works with negative offsets', () => {
+        const fovMap = new FieldOfViewMap(7, 7);
+        const fov = fovMap.getFieldOfView(-2, -2, 2);
+        assert.equal(fov.toString(), `(-4,-4)/false
+☐☐☐☐☐
+☐☐☐☐☐
+☐☐☑☑☑
+☐☐☑☑☑
+☐☐☑☑☑
+`);
+    });
 });
