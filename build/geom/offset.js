@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var X_FROM_CARDINAL_DIRECTION = [0, 1, 0, -1];
 var Y_FROM_CARDINAL_DIRECTION = [-1, 0, 1, 0];
-var Offset = (function () {
+var Offset = /** @class */ (function () {
     function Offset(x, y) {
         if (typeof x === 'undefined') {
             x = 0;
