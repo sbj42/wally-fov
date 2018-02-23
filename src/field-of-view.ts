@@ -51,7 +51,7 @@ const LOCAL_OFF = new geom.Offset();
 
 /**
  * The FieldOFViewMap represents the map over which the field of view will be
- * computed.  It start out empty.  You can add walls and bodies to it, and then
+ * computed.  It starts out empty.  You can add walls and bodies to it, and then
  * use getFieldOfView() to compute the field of view from a given point.
  */
 export class FieldOfViewMap {
