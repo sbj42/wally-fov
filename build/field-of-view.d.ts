@@ -1,15 +1,15 @@
 import * as geom from './geom';
 /**
  * The FieldOFViewMap represents the map over which the field of view will be
- * computed.  It start out empty.  You can add walls and bodies to it, and then
+ * computed.  It starts out empty.  You can add walls and bodies to it, and then
  * use getFieldOfView() to compute the field of view from a given point.
  */
 export declare class FieldOfViewMap {
     private readonly _size;
     private readonly _tileFlags;
     constructor(width: number, height: number);
-    private _addFlag(off, flag);
-    private _removeFlag(off, flag);
+    private _addFlag;
+    private _removeFlag;
     /**
      * Adds a wall at a particular edge.  This automatically adds the
      * corresponding wall on the other side.
@@ -34,5 +34,5 @@ export declare class FieldOfViewMap {
      * maskRect.get(x, y) will return true for visible tiles.
      */
     getFieldOfView(x: number, y: number, chebyshevRadius: number): geom.MaskRect;
-    private _quadrant(mask, origin, chebyshevRadius, xDir, yDir);
+    private _quadrant;
 }

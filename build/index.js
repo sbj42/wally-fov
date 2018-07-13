@@ -1,7 +1,7 @@
 "use strict";
 /*
  *  WallyFOV
- *  github.com/sbj42/WallyFOV
+ *  github.com/sbj42/wally-fov
  *  James Clark
  *  Licensed under the MIT license.
  */
