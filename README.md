@@ -1,5 +1,9 @@
 # WallyFOV
 
+[![Dependencies](https://david-dm.org/sbj42/wally-fov.svg)](https://david-dm.org/sbj42/wally-fov)
+[![CircleCI](https://img.shields.io/circleci/project/github/sbj42/wally-fov.svg)](https://circleci.com/gh/sbj42/wally-fov)
+[![License](https://img.shields.io/github/license/sbj42/wally-fov.svg)](https://github.com/sbj42/wally-fov)
+
 #### Shadow-casting field-of-view algorithm with support for walls
 
 [See the demo](https://sbj42.github.io/projects/wally-fov-demo/www/), and check out the successor to this algorithm: [WarpField](https://github.com/sbj42/warp-field), which supports portals.
