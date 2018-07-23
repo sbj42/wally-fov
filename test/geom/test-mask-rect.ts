@@ -59,4 +59,29 @@ describe('geom/mask-rect', () => {
             assert.equal(o.get(2, 3), false);
         });
     });
+    describe('#getAt()', () => {
+        it('works', () => {
+            const o = new geom.MaskRect({westX: 1, northY: 2, width: 3, height: 4});
+            assert.equal(o.getAt(4), false);
+            o.set({x: 2, y: 3}, true);
+            assert.equal(o.getAt(4), true);
+        });
+    });
+    describe('#forEach()', () => {
+        it('works', () => {
+            const o = new geom.MaskRect({westX: 1, northY: 2, width: 3, height: 4});
+            o.set({x: 1, y: 2}, true);
+            o.set({x: 2, y: 3}, true);
+            o.set({x: 3, y: 3}, true);
+            o.forEach(new geom.Offset(), (cursor, value) => {
+                if (cursor.x === 3 && cursor.y === 3) {
+                    assert.equal(value, true);
+                } else if (cursor.x === 2 && cursor.y === 3) {
+                    assert.equal(value, true);
+                } else if (cursor.x === 2 && cursor.y === 2) {
+                    assert.equal(value, false);
+                }
+            });
+        });
+    });
 });
