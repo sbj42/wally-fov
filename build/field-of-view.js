@@ -70,11 +70,13 @@ var FieldOfViewMap = /** @class */ (function () {
      * corresponding wall on the other side.
      */
     FieldOfViewMap.prototype.addWall = function (x, y, dir) {
-        LOCAL_OFF.set(x, y).addCardinalDirection(dir);
+        LOCAL_OFF.set(x, y);
         if (this._size.containsOffset(LOCAL_OFF)) {
-            this._addFlag(LOCAL_OFF, 1 << geom.directionOpposite(dir));
-            LOCAL_OFF.set(x, y);
             this._addFlag(LOCAL_OFF, 1 << dir);
+            LOCAL_OFF.addCardinalDirection(dir);
+            if (this._size.containsOffset(LOCAL_OFF)) {
+                this._addFlag(LOCAL_OFF, 1 << geom.directionOpposite(dir));
+            }
         }
     };
     /**
@@ -82,17 +84,22 @@ var FieldOfViewMap = /** @class */ (function () {
      * corresponding wall on the other side.
      */
     FieldOfViewMap.prototype.removeWall = function (x, y, dir) {
-        LOCAL_OFF.set(x, y).addCardinalDirection(dir);
+        LOCAL_OFF.set(x, y);
         if (this._size.containsOffset(LOCAL_OFF)) {
-            this._removeFlag(LOCAL_OFF, 1 << geom.directionOpposite(dir));
-            LOCAL_OFF.set(x, y);
             this._removeFlag(LOCAL_OFF, 1 << dir);
+            LOCAL_OFF.addCardinalDirection(dir);
+            if (this._size.containsOffset(LOCAL_OFF)) {
+                this._removeFlag(LOCAL_OFF, 1 << geom.directionOpposite(dir));
+            }
         }
     };
     FieldOfViewMap.prototype.getWalls = function (x, y) {
         LOCAL_OFF.set(x, y);
         var index = this._size.index(LOCAL_OFF);
         return this._tileFlags[index] & geom.DirectionFlags.ALL;
+    };
+    FieldOfViewMap.prototype.getWall = function (x, y, dir) {
+        return (this.getWalls(x, y) & (1 << dir)) !== 0;
     };
     FieldOfViewMap.prototype.addBody = function (x, y) {
         LOCAL_OFF.set(x, y);
@@ -105,7 +112,7 @@ var FieldOfViewMap = /** @class */ (function () {
     FieldOfViewMap.prototype.getBody = function (x, y) {
         LOCAL_OFF.set(x, y);
         var index = this._size.index(LOCAL_OFF);
-        return this._tileFlags[index] & TileFlag.BODY;
+        return (this._tileFlags[index] & TileFlag.BODY) !== 0;
     };
     // execution
     /**
@@ -247,6 +254,11 @@ function cutWedge(wedges, wedgeIndex, low, high) {
         if (low <= wedges[wedgeIndex + WEDGE_HIGH]) {
             break;
         }
+        // This next line is to cover a hypothetical edge case, where two slopes
+        // are not the same, but are within the BODY_EPSILON distance.  That
+        // would be due to either floating point error or due to a very large
+        // field radius.  Either way I haven't been able to construct a test
+        // case for it.
         wedgeIndex += WEDGE_COUNT;
     }
     if (low <= wedges[wedgeIndex + WEDGE_LOW]) {

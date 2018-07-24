@@ -21,9 +21,10 @@ export declare class FieldOfViewMap {
      */
     removeWall(x: number, y: number, dir: geom.Direction): void;
     getWalls(x: number, y: number): number;
+    getWall(x: number, y: number, dir: geom.Direction): boolean;
     addBody(x: number, y: number): void;
     removeBody(x: number, y: number): void;
-    getBody(x: number, y: number): number;
+    getBody(x: number, y: number): boolean;
     /**
      * Compute the field of view for a camera at the given tile.
      * chebyshevRadius is the vision radius.  It uses chebyshev distance
