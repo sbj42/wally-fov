@@ -47,6 +47,25 @@ describe('field-of-view', () => {
         assert.equal(false, fovMap.getWall(2, 5, geom.Direction.EAST));
         assert.equal(false, fovMap.getWall(3, 5, geom.Direction.WEST));
     });
+    it('wall manipulation works at the edge of the map', () => {
+        const fovMap = new FieldOfViewMap(2, 2);
+        fovMap.addWall(0, 0, geom.Direction.NORTH);
+        assert.equal(true, fovMap.getWall(0, 0, geom.Direction.NORTH));
+        fovMap.removeWall(0, 0, geom.Direction.NORTH);
+        assert.equal(false, fovMap.getWall(0, 0, geom.Direction.NORTH));
+        fovMap.addWall(0, 0, geom.Direction.WEST);
+        assert.equal(true, fovMap.getWall(0, 0, geom.Direction.WEST));
+        fovMap.removeWall(0, 0, geom.Direction.WEST);
+        assert.equal(false, fovMap.getWall(0, 0, geom.Direction.WEST));
+        fovMap.addWall(1, 1, geom.Direction.SOUTH);
+        assert.equal(true, fovMap.getWall(1, 1, geom.Direction.SOUTH));
+        fovMap.removeWall(1, 1, geom.Direction.SOUTH);
+        assert.equal(false, fovMap.getWall(1, 1, geom.Direction.SOUTH));
+        fovMap.addWall(1, 1, geom.Direction.EAST);
+        assert.equal(true, fovMap.getWall(1, 1, geom.Direction.EAST));
+        fovMap.removeWall(1, 1, geom.Direction.EAST);
+        assert.equal(false, fovMap.getWall(1, 1, geom.Direction.EAST));
+    });
     it('body manipulation works', () => {
         const fovMap = new FieldOfViewMap(7, 7);
         assert.equal(false, fovMap.getBody(0, 0));

@@ -80,11 +80,13 @@ export class FieldOfViewMap {
      * corresponding wall on the other side.
      */
     addWall(x: number, y: number, dir: geom.Direction) {
-        LOCAL_OFF.set(x, y).addCardinalDirection(dir);
+        LOCAL_OFF.set(x, y);
         if (this._size.containsOffset(LOCAL_OFF)) {
-            this._addFlag(LOCAL_OFF, 1 << geom.directionOpposite(dir));
-            LOCAL_OFF.set(x, y);
             this._addFlag(LOCAL_OFF, 1 << dir);
+            LOCAL_OFF.addCardinalDirection(dir);
+            if (this._size.containsOffset(LOCAL_OFF)) {
+                this._addFlag(LOCAL_OFF, 1 << geom.directionOpposite(dir));
+            }
         }
     }
 
@@ -93,11 +95,13 @@ export class FieldOfViewMap {
      * corresponding wall on the other side.
      */
     removeWall(x: number, y: number, dir: geom.Direction) {
-        LOCAL_OFF.set(x, y).addCardinalDirection(dir);
+        LOCAL_OFF.set(x, y);
         if (this._size.containsOffset(LOCAL_OFF)) {
-            this._removeFlag(LOCAL_OFF, 1 << geom.directionOpposite(dir));
-            LOCAL_OFF.set(x, y);
             this._removeFlag(LOCAL_OFF, 1 << dir);
+            LOCAL_OFF.addCardinalDirection(dir);
+            if (this._size.containsOffset(LOCAL_OFF)) {
+                this._removeFlag(LOCAL_OFF, 1 << geom.directionOpposite(dir));
+            }
         }
     }
 
