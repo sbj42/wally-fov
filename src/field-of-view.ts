@@ -282,6 +282,11 @@ function cutWedge(wedges: number[], wedgeIndex: number, low: number, high: numbe
         if (low <= wedges[wedgeIndex + WEDGE_HIGH]) {
             break;
         }
+        // This next line is to cover a hypothetical edge case, where two slopes
+        // are not the same, but are within the BODY_EPSILON distance.  That
+        // would be due to either floating point error or due to a very large
+        // field radius.  Either way I haven't been able to construct a test
+        // case for it.
         wedgeIndex += WEDGE_COUNT;
     }
     if (low <= wedges[wedgeIndex + WEDGE_LOW]) {
