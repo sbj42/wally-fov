@@ -3,7 +3,7 @@ import * as assert from 'assert';
 import {FieldOfViewMap} from '../src/field-of-view';
 import * as geom from '../src/geom';
 
-describe('carto/field-of-view', () => {
+describe('field-of-view', () => {
     it('works in middle of empty field', () => {
         const fovMap = new FieldOfViewMap(7, 7);
         const fov = fovMap.getFieldOfView(3, 3, 2);
