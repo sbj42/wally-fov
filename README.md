@@ -1,6 +1,6 @@
 # WallyFOV
 
-[![Dependencies](https://david-dm.org/sbj42/wally-fov.svg)](https://david-dm.org/sbj42/wally-fov)
+![Dependencies](https://img.shields.io/badge/dependencies-none-green.svg)]
 [![Node.js CI](https://github.com/sbj42/wally-fov/workflows/Node.js%20CI/badge.svg)](https://github.com/sbj42/wally-fov/actions?query=workflow%3A%22Node.js+CI%22)
 [![License](https://img.shields.io/github/license/sbj42/wally-fov.svg)](https://github.com/sbj42/wally-fov)
 
