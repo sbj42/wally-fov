@@ -1,9 +1,8 @@
 # WallyFOV
 
 [![Dependencies](https://david-dm.org/sbj42/wally-fov.svg)](https://david-dm.org/sbj42/wally-fov)
-[![CircleCI](https://img.shields.io/circleci/project/github/sbj42/wally-fov.svg)](https://circleci.com/gh/sbj42/wally-fov)
+[![Node.js CI](https://github.com/sbj42/wally-fov/workflows/Node.js%20CI/badge.svg)](https://github.com/sbj42/wally-fov/actions?query=workflow%3A%22Node.js+CI%22)
 [![License](https://img.shields.io/github/license/sbj42/wally-fov.svg)](https://github.com/sbj42/wally-fov)
-[![Coverage](https://coveralls.io/repos/github/sbj42/wally-fov/badge.svg?branch=master)](https://coveralls.io/github/sbj42/wally-fov?branch=master)
 
 #### Shadow-casting field-of-view algorithm with support for walls
 

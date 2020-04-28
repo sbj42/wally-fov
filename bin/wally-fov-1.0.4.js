@@ -932,4 +932,4 @@ exports.MaskRect = geom_1.MaskRect;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=wally-fov-1.0.2.js.map
+//# sourceMappingURL=wally-fov-1.0.4.js.map

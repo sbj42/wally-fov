@@ -9,8 +9,8 @@ export declare class Size implements SizeLike {
     constructor();
     constructor(width: number, height: number);
     toString(): string;
-    readonly empty: boolean;
-    readonly area: number;
+    get empty(): boolean;
+    get area(): number;
     set(width: number, height: number): this;
     copyFrom(other: SizeLike): this;
     containsOffset(off: geom.OffsetLike): boolean;

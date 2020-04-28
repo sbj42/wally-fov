@@ -5,10 +5,10 @@ export declare class MaskRect implements geom.RectangleLike {
     private readonly _outsideValue;
     constructor(rect: geom.RectangleLike, initialValue?: boolean, outsideValue?: boolean);
     toString(): string;
-    readonly westX: number;
-    readonly northY: number;
-    readonly width: number;
-    readonly height: number;
+    get westX(): number;
+    get northY(): number;
+    get width(): number;
+    get height(): number;
     index(off: geom.OffsetLike): number;
     getAt(index: number): boolean;
     get(x: number, y: number): boolean;
