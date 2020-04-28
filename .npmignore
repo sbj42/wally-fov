@@ -3,7 +3,7 @@ npm-debug.log*
 /.vscode
 /local
 /coverage
-/.circleci
+/.github
 /img
 /benchmark
 /bin
