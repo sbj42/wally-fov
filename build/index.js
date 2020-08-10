@@ -7,9 +7,9 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 var field_of_view_1 = require("./field-of-view");
-exports.FieldOfViewMap = field_of_view_1.FieldOfViewMap;
+Object.defineProperty(exports, "FieldOfViewMap", { enumerable: true, get: function () { return field_of_view_1.FieldOfViewMap; } });
 var geom_1 = require("./geom");
-exports.Direction = geom_1.Direction;
-exports.DirectionFlags = geom_1.DirectionFlags;
-exports.MaskRect = geom_1.MaskRect;
+Object.defineProperty(exports, "Direction", { enumerable: true, get: function () { return geom_1.Direction; } });
+Object.defineProperty(exports, "DirectionFlags", { enumerable: true, get: function () { return geom_1.DirectionFlags; } });
+Object.defineProperty(exports, "MaskRect", { enumerable: true, get: function () { return geom_1.MaskRect; } });
 //# sourceMappingURL=index.js.map

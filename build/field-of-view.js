@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FieldOfViewMap = void 0;
 var geom = require("./geom");
 // tslint:disable:no-bitwise
 /**

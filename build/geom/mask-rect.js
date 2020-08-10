@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MaskRect = void 0;
 var geom = require(".");
 var LOCAL_OFF = new geom.Offset();
 var MaskRect = /** @class */ (function () {
@@ -19,28 +20,28 @@ var MaskRect = /** @class */ (function () {
         get: function () {
             return this._rectangle.westX;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(MaskRect.prototype, "northY", {
         get: function () {
             return this._rectangle.northY;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(MaskRect.prototype, "width", {
         get: function () {
             return this._rectangle.width;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(MaskRect.prototype, "height", {
         get: function () {
             return this._rectangle.height;
         },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     MaskRect.prototype.index = function (off) {

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Offset = void 0;
 var X_FROM_CARDINAL_DIRECTION = [0, 1, 0, -1];
 var Y_FROM_CARDINAL_DIRECTION = [-1, 0, 1, 0];
 var Offset = /** @class */ (function () {
