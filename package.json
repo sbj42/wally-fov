@@ -1,6 +1,6 @@
 {
   "name": "wally-fov",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Shadow-casting field-of-view algorithm with support for walls",
   "keywords": [
     "fov",
