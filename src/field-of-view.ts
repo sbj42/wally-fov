@@ -1,17 +1,17 @@
-import * as geom from './geom';
+import * as geom from 'tiled-geometry';
 
-// tslint:disable:no-bitwise
+/* eslint-disable indent */
 
 /**
  * These flags determine whether a given tile has walls in any of the cardinal
  * directions, and whether there is a "body" in the tile.
  */
 enum TileFlag {
-    WALL_NORTH = 1 << geom.Direction.NORTH,
-    WALL_EAST  = 1 << geom.Direction.EAST,
-    WALL_WEST  = 1 << geom.Direction.WEST,
-    WALL_SOUTH = 1 << geom.Direction.SOUTH,
-    BODY       = 1 << geom.DIRECTIONS.length,
+    WALL_NORTH = 1 << geom.CardinalDirection.NORTH,
+    WALL_EAST  = 1 << geom.CardinalDirection.EAST,
+    WALL_WEST  = 1 << geom.CardinalDirection.WEST,
+    WALL_SOUTH = 1 << geom.CardinalDirection.SOUTH,
+    BODY       = 1 << geom.CARDINAL_DIRECTIONS.length,
 }
 
 /**
@@ -44,8 +44,7 @@ const BODY_EPSILON = 0.00001;
 const WALL_EPSILON = BODY_EPSILON / 10;
 
 /**
- * We avoid heap allocations during the core part of the algorithm by using this
- * preallocated offset object.
+ * We avoid heap allocations in some places by using this preallocated offset object.
  */
 const LOCAL_OFF = new geom.Offset();
 
@@ -63,13 +62,13 @@ export class FieldOfViewMap {
         this._tileFlags = new Array<number>(this._size.area).fill(0);
     }
 
-    private _addFlag(off: geom.OffsetLike, flag: TileFlag) {
-        const index = this._size.index(off);
+    private _addFlag(x: number, y: number, flag: TileFlag) {
+        const index = this._size.index(x, y);
         this._tileFlags[index] |= flag;
     }
 
-    private _removeFlag(off: geom.OffsetLike, flag: TileFlag) {
-        const index = this._size.index(off);
+    private _removeFlag(x: number, y: number, flag: TileFlag) {
+        const index = this._size.index(x, y);
         this._tileFlags[index] &= ~flag;
     }
 
@@ -79,55 +78,55 @@ export class FieldOfViewMap {
      * Adds a wall at a particular edge.  This automatically adds the
      * corresponding wall on the other side.
      */
-    addWall(x: number, y: number, dir: geom.Direction) {
-        LOCAL_OFF.set(x, y);
-        if (this._size.containsOffset(LOCAL_OFF)) {
-            this._addFlag(LOCAL_OFF, 1 << dir);
+    addWall(x: number, y: number, dir: geom.CardinalDirection): this {
+        if (this._size.contains(x, y)) {
+            this._addFlag(x, y, 1 << dir);
+            LOCAL_OFF.set(x, y);
             LOCAL_OFF.addCardinalDirection(dir);
             if (this._size.containsOffset(LOCAL_OFF)) {
-                this._addFlag(LOCAL_OFF, 1 << geom.directionOpposite(dir));
+                this._addFlag(LOCAL_OFF.x, LOCAL_OFF.y, 1 << geom.cardinalDirectionOpposite(dir));
             }
         }
+        return this;
     }
 
     /**
      * Removes a wall at a particular edge.  This automatically removes the
      * corresponding wall on the other side.
      */
-    removeWall(x: number, y: number, dir: geom.Direction) {
-        LOCAL_OFF.set(x, y);
-        if (this._size.containsOffset(LOCAL_OFF)) {
-            this._removeFlag(LOCAL_OFF, 1 << dir);
+    removeWall(x: number, y: number, dir: geom.CardinalDirection): this {
+        if (this._size.contains(x, y)) {
+            this._removeFlag(x, y, 1 << dir);
+            LOCAL_OFF.set(x, y);
             LOCAL_OFF.addCardinalDirection(dir);
             if (this._size.containsOffset(LOCAL_OFF)) {
-                this._removeFlag(LOCAL_OFF, 1 << geom.directionOpposite(dir));
+                this._removeFlag(LOCAL_OFF.x, LOCAL_OFF.y, 1 << geom.cardinalDirectionOpposite(dir));
             }
         }
+        return this;
     }
 
-    getWalls(x: number, y: number) {
-        LOCAL_OFF.set(x, y);
-        const index = this._size.index(LOCAL_OFF);
-        return this._tileFlags[index] & geom.DirectionFlags.ALL;
+    getWalls(x: number, y: number): geom.CardinalDirectionFlags {
+        const index = this._size.index(x, y);
+        return this._tileFlags[index] & geom.CardinalDirectionFlags.ALL;
     }
 
-    getWall(x: number, y: number, dir: geom.Direction) {
+    getWall(x: number, y: number, dir: geom.CardinalDirection): boolean {
         return (this.getWalls(x, y) & (1 << dir)) !== 0;
     }
 
-    addBody(x: number, y: number) {
-        LOCAL_OFF.set(x, y);
-        this._addFlag(LOCAL_OFF, TileFlag.BODY);
+    addBody(x: number, y: number): this {
+        this._addFlag(x, y, TileFlag.BODY);
+        return this;
     }
 
-    removeBody(x: number, y: number) {
-        LOCAL_OFF.set(x, y);
-        this._removeFlag(LOCAL_OFF, TileFlag.BODY);
+    removeBody(x: number, y: number): this {
+        this._removeFlag(x, y, TileFlag.BODY);
+        return this;
     }
 
-    getBody(x: number, y: number) {
-        LOCAL_OFF.set(x, y);
-        const index = this._size.index(LOCAL_OFF);
+    getBody(x: number, y: number): boolean {
+        const index = this._size.index(x, y);
         return (this._tileFlags[index] & TileFlag.BODY) !== 0;
     }
 
@@ -142,15 +141,15 @@ export class FieldOfViewMap {
      * This returns a MaskRect, which indicates which tiles are visible.
      * maskRect.get(x, y) will return true for visible tiles.
      */
-    getFieldOfView(x: number, y: number, chebyshevRadius: number): geom.MaskRect {
+    getFieldOfView(x: number, y: number, chebyshevRadius: number): geom.MaskRectangle {
         const origin = new geom.Offset(x, y);
         const boundRect = new geom.Rectangle(
             origin.x - chebyshevRadius, origin.y - chebyshevRadius,
             chebyshevRadius * 2 + 1, chebyshevRadius * 2 + 1,
         );
-        const mask = new geom.MaskRect(boundRect);
+        const mask = new geom.MaskRectangle(boundRect);
         // the player can always see itself
-        mask.set(origin, true);
+        mask.setAtOffset(origin, true);
         // the field is divided into quadrants
         this._quadrant(mask, origin, chebyshevRadius, -1, -1);
         this._quadrant(mask, origin, chebyshevRadius,  1, -1);
@@ -159,7 +158,7 @@ export class FieldOfViewMap {
         return mask;
     }
 
-    private _quadrant(mask: geom.MaskRect, origin: geom.OffsetLike, chebyshevRadius: number,
+    private _quadrant(mask: geom.MaskRectangle, origin: geom.OffsetLike, chebyshevRadius: number,
                       xDir: number, yDir: number) {
         const {x: startX, y: startY} = origin;
         const endDX = (Math.min(Math.max(startX + xDir * (chebyshevRadius + 1),
@@ -172,8 +171,8 @@ export class FieldOfViewMap {
         }
         const farYFlag = yDir === 1 ? TileFlag.WALL_SOUTH : TileFlag.WALL_NORTH;
         const farXFlag = xDir === 1 ? TileFlag.WALL_EAST : TileFlag.WALL_WEST;
-        const startMapIndex = this._size.index(origin);
-        const startMaskIndex = mask.index(origin);
+        const startMapIndex = this._size.index(origin.x ,origin.y);
+        const startMaskIndex = mask.index(origin.x ,origin.y);
         // Initial wedge is from slope zero to slope infinity (i.e. the whole quadrant)
         const wedges = [0, Number.POSITIVE_INFINITY];
         // X += Y must be written as X = X + Y, in order not to trigger deoptimization due to
@@ -239,7 +238,7 @@ export class FieldOfViewMap {
                 }
 
                 // we can see this tile
-                mask.setAt(maskIndex, true);
+                mask.setAtIndex(maskIndex, true);
 
                 // const/let must be at the top of a block, in order not to trigger deoptimization due to
                 // https://github.com/nodejs/node/issues/9729

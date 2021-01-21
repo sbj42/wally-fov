@@ -1,12 +1,12 @@
 import * as Benchmark from 'benchmark';
 import * as seedrandom from 'seedrandom';
 
-import {FieldOfViewMap, Direction} from '../src';
+import {FieldOfViewMap, CardinalDirection} from '../src';
 
-// tslint:disable:no-console
+/* eslint-disable no-console */
 
 const suite = new Benchmark.Suite();
-suite.on('cycle', (event: any) => {
+suite.on('cycle', (event: {target: string}) => {
     console.log(`field-of-view/${event.target}`);
 });
 const width = 31;
@@ -26,16 +26,16 @@ const originY = 15;
     for (let y = 0; y < height; y ++) {
         for (let x = 0; x < width; x ++) {
             if (y > 0 && random() < chance) {
-                fovMap.addWall(x, y, Direction.NORTH);
+                fovMap.addWall(x, y, CardinalDirection.NORTH);
             }
             if (x < width - 1 && random() < chance) {
-                fovMap.addWall(x, y, Direction.EAST);
+                fovMap.addWall(x, y, CardinalDirection.EAST);
             }
             if (y < height - 1 && random() < chance) {
-                fovMap.addWall(x, y, Direction.SOUTH);
+                fovMap.addWall(x, y, CardinalDirection.SOUTH);
             }
             if (x > 0 && random() < chance) {
-                fovMap.addWall(x, y, Direction.WEST);
+                fovMap.addWall(x, y, CardinalDirection.WEST);
             }
         }
     }

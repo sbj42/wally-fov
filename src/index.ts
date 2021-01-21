@@ -6,4 +6,4 @@
  */
 
 export {FieldOfViewMap} from './field-of-view';
-export {Direction, DirectionFlags, MaskRect} from './geom';
+export {CardinalDirection, CardinalDirectionFlags, MaskRectangle} from 'tiled-geometry';
