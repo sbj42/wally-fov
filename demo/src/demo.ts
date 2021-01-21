@@ -189,6 +189,41 @@ function render() {
     }
 }
 
+let auto = true;
+window.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        let nx = px;
+        let ny = py;
+        let dir: WallyFOV.CardinalDirection;
+        switch (event.key) {
+            case 'ArrowUp':
+                dir = WallyFOV.CardinalDirection.NORTH;
+                ny --;
+                break;
+            case 'ArrowDown':
+                dir = WallyFOV.CardinalDirection.SOUTH;
+                ny ++;
+                break;
+            case 'ArrowLeft':
+                dir = WallyFOV.CardinalDirection.WEST;
+                nx --;
+                break;
+            case 'ArrowRight':
+                dir = WallyFOV.CardinalDirection.EAST;
+                nx ++;
+                break;
+        }
+        if (nx >= 0 && ny >= 0 && nx < width && ny < height && !map.getWall(px, py, dir) && !map.getBody(nx, ny)) {
+            px = nx;
+            py = ny;
+            requestAnimationFrame(render);
+        }
+        event.preventDefault();
+        auto = false;
+        document.getElementById('takeover')?.remove();
+    }
+});
+
 const imageOff: {[id: string]: number} = {
     'floor1': 0,
     'floor2': 1,
@@ -217,6 +252,9 @@ tiles.onload = function() {
 
     function step() {
 
+        if (!auto) {
+            return;
+        }
         if (!path) {
             if (working) {
                 easystar.calculate();
