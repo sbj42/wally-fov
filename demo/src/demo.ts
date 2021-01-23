@@ -179,10 +179,10 @@ function render() {
             }
         }
     }
-    const fov = map.getFieldOfView(px, py, 15);
+    const fov = WallyFOV.computeFieldOfView(map, px, py, 15);
     for (let y = 0; y < height; y ++) {
         for (let x = 0; x < width; x ++) {
-            if (!fov.get(x, y)) {
+            if (!fov.getVisible(x, y)) {
                 context.drawImage(tiles, imageOff['shadow'] * 32, 0, 32, 32, x * 32, y * 32, 32, 32);
             }
         }
