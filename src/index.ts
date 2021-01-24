@@ -8,4 +8,4 @@
 export {FieldOfViewMap} from './field-of-view-map';
 export {FieldOfView} from './field-of-view';
 export {computeFieldOfView} from './compute';
-export {CardinalDirection, CardinalDirectionFlags, MaskRectangle} from 'tiled-geometry';
+export {CardinalDirection, CardinalDirectionFlags} from 'tiled-geometry';

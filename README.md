@@ -48,9 +48,19 @@ const fov = WallyFOV.computeFieldOfView(fovMap, playerX, playerY, visionRadius);
 
 See which tiles are visible:
 ```js
-fov.get(4, 0); // -> true
-fov.get(4, 1); // -> false
+fov.getVisible(4, 0); // -> true
+fov.getVisible(4, 1); // -> false
 ```
+
+## Upgrading to version 2
+
+Some API changes were made for version 2, here's what you need to do to upgrade:
+
+* The `Direction` enumeration has been renamed to `CardinalDirection`
+* Instead of calling `fovMap.getFieldOfView(x, y, radius)`, call `WallyFOV.computeFieldOfView(fovMap, x, y, radius)`
+* Instead of calling `fov.get(x, y)`, call `fov.getVisible(x, y)`
+
+If you're using TypeScript, some of the type names have changed.  For instance, the type for the field of view is now `FieldOfView` instead of `MaskRectangle`.
 
 ## Details
 
