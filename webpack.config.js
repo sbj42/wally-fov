@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-var path = require('path');
-var config = require('./package.json');
+const path = require('path');
+const config = require('./package.json');
 
 module.exports = (env, argv) => {
-    var filename = 'wally-fov-' + config.version;
+    let filename = config.name + '-' + config.version;
     if (argv.mode === 'production') {
         filename += '.min.js';
     } else {
@@ -13,22 +13,22 @@ module.exports = (env, argv) => {
         entry: './src/index.ts',
         devtool: 'source-map',
         output: {
-            path: path.resolve(__dirname, 'bin'),
-            publicPath: '/bin/',
+            path: path.resolve(__dirname, 'dist'),
+            publicPath: '/dist/',
             filename: filename,
             libraryTarget: 'var',
-            library: 'WallyFov'
+            library: 'WallyFov',
         },
         resolve: {
-            extensions: ['.ts']
+            extensions: ['.ts', '.js'],
         },
         module: {
             rules: [
                 {
                     test: /\.ts$/,
-                    use: [ 'ts-loader' ]
-                }
-            ]
-        }
+                    use: [ 'ts-loader' ],
+                },
+            ],
+        },
     };
 };
